@@ -8,10 +8,10 @@ let ai: GoogleGenAI | null = null;
  * Gets a singleton instance of the GoogleGenAI client.
  * Initializes it on the first call.
  */
+// FIX: Updated to use `process.env.API_KEY` and removed hardcoded key logic, resolving the comparison error.
 const getAiClient = (): GoogleGenAI => {
   if (!ai) {
-    // This will still produce an error when called if the API key is not set,
-    // but it will be caught by the functions below, preventing a crash.
+    // Per guidelines, API key must come from process.env.API_KEY and is assumed to be configured.
     ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
   return ai;
@@ -33,7 +33,8 @@ export const getAiResponse = async (message: string): Promise<string> => {
     return response.text;
   } catch (error) {
     console.error("Error getting AI response from Gemini:", error);
-    return "Sorry, I'm having trouble connecting to the AI service right now. This might be due to a missing API key configuration. Please try again later.";
+    // FIX: Simplified error handling. The API key is assumed to be configured via environment variables.
+    return "Sorry, I'm having trouble connecting to the AI service right now. Please try again later.";
   }
 };
 
@@ -70,6 +71,7 @@ export const getAiInsightReport = async (readings: BloodPressureReading[]): Prom
     return response.text;
   } catch (error) {
     console.error("Error getting AI insight report from Gemini:", error);
-    return "Sorry, I could not generate the report due to a connection issue. This might be due to a missing API key configuration. Please try again later.";
+    // FIX: Simplified error handling. The API key is assumed to be configured via environment variables.
+    return "Sorry, I could not generate the report. Please try again later.";
   }
 };
